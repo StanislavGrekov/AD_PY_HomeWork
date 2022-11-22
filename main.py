@@ -1,146 +1,105 @@
-import os
-import datetime
-
-#####1 Задание #########
-def logger(old_function):
-
-    def new_function(*args,**kwargs):
-        try:
-            arg_1 = args[0]
-            arg_2 = args[1]
-            day_time= datetime.datetime.today().strftime("%d.%m.%Y %H:%M:%S")
-            result = old_function(*args)
-            main = open('main.log', 'a', encoding='utf-8')
-            main.write(f"Дата и время выполнения: {day_time}, имя функции: {old_function} аргумент №1: {arg_1}, аргумент №2: {arg_2}, возвращаемое значение: {result}\n")
-            main.close()
-            return result
-        except IndexError:
-            try:
-                arg_1 = args[0]
-                for key,values in kwargs.items():
-                    arg_2 = values
-                day_time = datetime.datetime.today().strftime("%d.%m.%Y %H:%M:%S")
-                result = old_function(*args,**kwargs)
-                main = open('main.log', 'a', encoding='utf-8')
-                main.write(
-                    f"Дата и время выполнения: {day_time}, имя функции: {old_function} аргумент №1: {arg_1}, аргумент №2: {arg_2}, возвращаемое значение: {result}\n")
-                main.close()
-                return result
-            except:
-                arg_1 = kwargs['a']
-                arg_2 = kwargs['b']
-                day_time = datetime.datetime.today().strftime("%d.%m.%Y %H:%M:%S")
-                result = old_function(*args, **kwargs)
-                main = open('main.log', 'a', encoding='utf-8')
-                main.write(
-                    f"Дата и время выполнения: {day_time}, имя функции: {old_function} аргумент №1: {arg_1}, аргумент №2: {arg_2}, возвращаемое значение: {result}\n")
-                main.close()
-                return result
-
-    return new_function
-
-def test_1():
-
-    path = 'main.log'
-    if os.path.exists(path):
-        os.remove(path)
-
-    @logger
-    def summator(a, b=0):
-        return a + b
-
-    @logger
-    def div(a, b):
-        return a / b
-
-    result = summator(2, 2)
-    assert isinstance(result, int), 'Должно вернуться целое число'
-    assert result == 4, '2 + 2 = 4'
-    result = div(6, 2)
-    assert result == 3, '6 / 2 = 3'
-
-    assert os.path.exists(path), 'файл main.log должен существовать'
-
-    summator(4.3, b=2.2)
-    summator(a=0, b=0)
-
-    with open(path) as log_file:
-        log_file_content = log_file.read()
-
-    assert 'summator' in log_file_content, 'должно записаться имя функции'
-    for item in (4.3, 2.2, 6.5):
-        assert str(item) in log_file_content, f'{item} должен быть записан в файл'
+import requests
+import string
 
 
-if __name__ == '__main__':
-    test_1()
+############################################## 1 задание, упражнение 1 #############################################
+geo_logs = [
+    {'visit1': ['Москва', 'Россия']},
+    {'visit2': ['Дели', 'Индия']},
+    {'visit3': ['Владимир', 'Россия']},
+    {'visit4': ['Лиссабон', 'Португалия']},
+    {'visit5': ['Париж', 'Франция']},
+    {'visit6': ['Лиссабон', 'Португалия']},
+    {'visit7': ['Тула', 'Россия']},
+    {'visit8': ['Тула', 'Россия']},
+    {'visit9': ['Курск', 'Россия']},
+    {'visit10': ['Архангельск', 'Россия']}
+]
+#Функция для тестирования
+def geo_(my_list: list)->list:
+    my_dict = [{k:v for (k,v) in element.items() if v[1]=='Россия'} for element in geo_logs]
+    return list(filter(None,my_dict))
+
+############################################## 1 задание, упражнение 2 #############################################
+
+ids = {'user1': [213, 213, 213, 15, 213],
+       'user2': [54, 54, 119, 119, 119],
+       'user3': [213, 98, 98, 35]}
+#Функция для тестирования
+def ids_(my_dict: dict)->list:
+    my_list = []
+    for values in ids.values():
+        my_list.extend(values)
+    new_list = set(my_list)
+    return list(new_list)
+
+############################################# 1 задание, упражнение 3 #############################################
+queries = [
+    'смотреть сериалы онлайн',
+    'новости спорта',
+    'афиша кино',
+    'курс доллара',
+    'сериалы этим летом',
+    'курс по питону',
+    'сериалы про спорт'
+    ]
+#Функция для тестирования
+def queries_(queries: list) -> list:
+    len_queries = len(queries)
+    my_list = [round(len(element.split(' '))/len_queries*100, 2) for element in queries]
+    return my_list
 
 
-######2 Задание #########
-def logger(path):
-    def __logger(old_function):
-        def new_function(*args,**kwargs):
-            try:
-                arg_1 = args[0]
-                arg_2 = args[1]
-                day_time= datetime.datetime.today().strftime("%d.%m.%Y %H:%M:%S")
-                result = old_function(*args)
-                main = open(path, 'a', encoding='utf-8')
-                main.write(f"Дата и время выполнения: {day_time}, имя функции: {old_function} аргумент №1: {arg_1}, аргумент №2: {arg_2}, возвращаемое значение: {result}\n")
-                main.close()
-                return result
-            except IndexError:
-                pass
-                try:
-                    arg_1 = args[0]
-                    for key,values in kwargs.items():
-                        arg_2 = values
-                    day_time = datetime.datetime.today().strftime("%d.%m.%Y %H:%M:%S")
-                    result = old_function(*args,**kwargs)
-                    main = open(path, 'a', encoding='utf-8')
-                    main.write(
-                        f"Дата и время выполнения: {day_time}, имя функции: {old_function} аргумент №1: {arg_1}, аргумент №2: {arg_2}, возвращаемое значение: {result}\n")
-                    main.close()
-                    return result
-                except:
-                    pass
-        return new_function
-    return __logger
+########################### 2 Задание ##################################
+class YaDisk:
+    def __init__(self, tokenYa):
+        self.token = tokenYa
 
-def test_2():
-    paths = ('log_1.log', 'log_2.log', 'log_3.log')
+    def get_headers(self):
+        '''
+        Даный метод возращается heders, используется в других методах при формировании запроса
+        '''
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': f'OAuth {self.token}'
+        }
 
-    for path in paths:
-        if os.path.exists(path):
-            os.remove(path)
-    for path in paths:
-        @logger(path)
-        def summator(a, b=0):
-            return a + b
+    def category_created(self, path_to_file: str):
+        '''
+        Данный метод создает каталог на Яндекс.диске. На вход получает название каталога
+        '''
+        digit = string.digits
+        character = string.ascii_lowercase
+        if len(path_to_file)>4:
+            return "len name of folder > 4"
+        if any(d in digit for d in path_to_file):
+            return 'digit'
+        if any(letter in character for letter in path_to_file):
+            return 'lowwercase'
+        file_url = 'https://cloud-api.yandex.net/v1/disk/resources'
+        headers = self.get_headers()
+        params = {'path': path_to_file}
+        response = requests.put(file_url, headers=headers, params=params)
+        status_code = response.status_code
+        return status_code
 
-        @logger(path)
-        def div(a, b):
-            return a / b
-
-        result = summator(2, 2)
-        assert isinstance(result, int), 'Должно вернуться целое число'
-        assert result == 4, '2 + 2 = 4'
-        result = div(6, 2)
-        assert result == 3, '6 / 2 = 3'
-        summator(4.3, b=2.2)
-
-    for path in paths:
-
-        assert os.path.exists(path), f'файл {path} должен существовать'
-
-        with open(path) as log_file:
-            log_file_content = log_file.read()
-
-        assert 'summator' in log_file_content, 'должно записаться имя функции'
-
-        for item in (4.3, 2.2, 6.5):
-            assert str(item) in log_file_content, f'{item} должен быть записан в файл'
+    def category_delete(self, path_to_file: str):
+        '''
+        Данный метод удаляет каталог на Яндекс.диске. На вход получает название каталога
+        '''
+        file_url = 'https://cloud-api.yandex.net/v1/disk/resources'
+        headers = self.get_headers()
+        params = {'path': path_to_file}
+        response = requests.delete(file_url, headers=headers, params=params)
+        status_code = response.status_code
+        return status_code
 
 
-if __name__ == '__main__':
-    test_2()
+
+with open('tokenYa.txt', 'r') as file_object:
+            tokenYa = file_object.read().strip()
+ya = YaDisk(tokenYa)
+
+
+
+
